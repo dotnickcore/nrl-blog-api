@@ -1,77 +1,24 @@
-const express = require('express')
+const express = require('express');
+const { registerUser, loginUser, getUserProfile, getUsers, deleteUser, updateUser } = require('../../controllers/users/usersController');
 
 const userRouter = express.Router();
 
 // POST /api/v1/users/register
-userRouter.post("/register", async(req, res) => {
-    try {
-        res.json({
-            status: 'success',
-            data: 'user registered'
-        });
-    } catch (error) {
-        res.json(error)
-    }
-});
+userRouter.post("/register", registerUser);
 
 // POST /api/v1/users/login
-userRouter.post('/login', async(req, res) => {
-    try {
-        res.json({
-            status: 'success',
-            data: 'user login'
-        });
-    } catch (error) {
-        res.json(error)
-    }
-});
+userRouter.post('/login', loginUser);
 
 // GET/api/v1/users/profile/:id
-userRouter.get('/profile/:id', async(req, res) => {
-    try {
-        res.json({
-            status: 'success',
-            data: 'user profile found'
-        });
-    } catch (error) {
-        res.json(error)
-    }
-});
+userRouter.get('/profile/:id', getUserProfile);
 
 // GET/api/v1/users
-userRouter.get('/', async(req, res) => {
-    try {
-        res.json({
-            status: 'success',
-            data: 'profiles found'
-        });
-    } catch (error) {
-        res.json(error)
-    }
-});
+userRouter.get('/', getUsers);
 
 // DELETE/api/v1/users/:id
-userRouter.delete('/:id', async(req, res) => {
-    try {
-        res.json({
-            status: 'success',
-            data: 'user profile deleted'
-        });
-    } catch (error) {
-        res.json(error)
-    }
-});
+userRouter.delete('/:id', deleteUser);
 
 // PUT/api/v1/users/:id
-userRouter.put('/:id', async(req, res) => {
-    try {
-        res.json({
-            status: 'success',
-            data: 'user profile updated'
-        });
-    } catch (error) {
-        res.json(error)
-    }
-});
+userRouter.put('/:id', updateUser);
 
 module.exports = userRouter;

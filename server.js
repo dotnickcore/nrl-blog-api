@@ -10,7 +10,6 @@ const app = express();
 
 // middleware
 
-
 // routes
 // users route
 app.use("/api/v1/users/", userRouter);
