@@ -13,7 +13,7 @@ const getComment = async(req, res) => {
     try {
         res.json({
             status: 'success',
-            data: 'comments found'
+            data: 'comment found'
         });
     } catch (error) {
         res.json(error)
@@ -24,7 +24,7 @@ const getComments = async(req, res) => {
     try {
         res.json({
             status: 'success',
-            data: 'comment found'
+            data: 'comments found'
         });
     } catch (error) {
         res.json(error)
