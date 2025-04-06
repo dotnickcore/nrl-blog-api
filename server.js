@@ -1,8 +1,8 @@
 const express = require("express");
 const dotenv = require('dotenv');
+const userRouter = require("./routes/users/usersRoutes");
 dotenv.config();
 require("./config/dbConnect")
-
 const app = express();
 
 // middleware
@@ -11,77 +11,7 @@ const app = express();
 // routes
 
 // users route
-// POST/api/v1/users/register
-app.post('/api/v1/users/register', async(req, res) => {
-    try {
-        res.json({
-            status: 'success',
-            data: 'user registered'
-        });
-    } catch (error) {
-        res.json(error)
-    }
-});
-
-// POST/api/v1/users/login
-app.post('/api/v1/users/login', async(req, res) => {
-    try {
-        res.json({
-            status: 'success',
-            data: 'user login'
-        });
-    } catch (error) {
-        res.json(error)
-    }
-});
-
-// GET/api/v1/users/profile/:id
-app.get('/api/v1/users/profile/:id', async(req, res) => {
-    try {
-        res.json({
-            status: 'success',
-            data: 'user profile found'
-        });
-    } catch (error) {
-        res.json(error)
-    }
-});
-
-// GET/api/v1/users
-app.get('/api/v1/users', async(req, res) => {
-    try {
-        res.json({
-            status: 'success',
-            data: 'profiles found'
-        });
-    } catch (error) {
-        res.json(error)
-    }
-});
-
-// DELETE/api/v1/users/:id
-app.delete('/api/v1/users/:id', async(req, res) => {
-    try {
-        res.json({
-            status: 'success',
-            data: 'user profile deleted'
-        });
-    } catch (error) {
-        res.json(error)
-    }
-});
-
-// PUT/api/v1/users/:id
-app.put('/api/v1/users/:id', async(req, res) => {
-    try {
-        res.json({
-            status: 'success',
-            data: 'user profile updated'
-        });
-    } catch (error) {
-        res.json(error)
-    }
-});
+app.use("/api/v1/users/", userRouter);
 
 // posts route
 // POST/api/v1/posts
