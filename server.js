@@ -1,14 +1,29 @@
 const express = require("express");
-const dotenv = require('dotenv');
 const userRouter = require("./routes/users/usersRoutes");
 const postRouter = require("./routes/posts/postsRoutes");
 const commentRouter = require("./routes/comments/commentsRoutes");
 const categoryRouter = require("./routes/categories/categoriesRoutes");
-dotenv.config();
+
+require("dotenv").config();
 require("./config/dbConnect")
+
 const app = express();
 
 // middleware
+const userAuth = {
+    isLogin: true,
+    isAdmin: false,
+}
+
+app.use((req, res, next) => {
+    if (userAuth.isLogin) {
+        next();
+    } else {
+        return res.json({
+            msg: "Invalid Login Credentials"
+        })
+    }
+});
 
 // routes
 // users route

@@ -1,4 +1,8 @@
+const User = require("../../model/User/User")
+
 const registerUser = async(req, res) => {
+    console.log(req.body);
+
     try {
         res.json({
             status: 'success',
