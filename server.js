@@ -10,20 +10,7 @@ require("./config/dbConnect")
 const app = express();
 
 // middleware
-const userAuth = {
-    isLogin: true,
-    isAdmin: false,
-}
-
-app.use((req, res, next) => {
-    if (userAuth.isLogin) {
-        next();
-    } else {
-        return res.json({
-            msg: "Invalid Login Credentials"
-        })
-    }
-});
+app.use(express.json());
 
 // routes
 // users route

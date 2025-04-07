@@ -1,12 +1,31 @@
-const User = require("../../model/User/User")
+const bcrypt = require('bcryptjs');
+const User = require("../../model/User/User");
 
 const registerUser = async(req, res) => {
-    console.log(req.body);
-
+    const { firstname, lastname, profilePhoto, email, password } = req.body;
+    
     try {
+        const userFound = await User.findOne({email});
+
+        if (userFound) {
+            return res.json({
+                msg: "User Already Exists"
+            })
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const user = await User.create({
+            firstname, 
+            lastname, 
+            email, 
+            password: hashedPassword
+        })
+
         res.json({
             status: 'success',
-            data: 'user registered'
+            data: user
         });
     } catch (error) {
         res.json(error)
@@ -14,10 +33,32 @@ const registerUser = async(req, res) => {
 }
 
 const loginUser = async(req, res) => {
+    const { email, password } = req.body;
+
     try {
-        res.json({
+        const userFound = await User.findOne({email});
+
+        if (!userFound) {
+            return res.json({
+                msg: "Invalid Login Credentials"
+            });
+        }
+
+        const isPasswordMatch = await bcrypt.compare(
+            password,
+            userFound.password
+        );
+
+        if(!isPasswordMatch) {
+            return res.json({
+                status: 'success',
+                data: 'invalid login credentials'
+            });
+        }
+
+        return res.json({
             status: 'success',
-            data: 'user login'
+            data: userFound
         });
     } catch (error) {
         res.json(error)
