@@ -1,5 +1,6 @@
 const express = require('express');
 const { registerUser, loginUser, getUserProfile, getUsers, deleteUser, updateUser } = require('../../controllers/users/usersController');
+const isLogin = require("../../middlewares/isLogin")
 
 const userRouter = express.Router();
 
@@ -10,7 +11,7 @@ userRouter.post("/register", registerUser);
 userRouter.post('/login', loginUser);
 
 // GET/api/v1/users/profile/:id
-userRouter.get('/profile/:id', getUserProfile);
+userRouter.get('/profile/', isLogin, getUserProfile);
 
 // GET/api/v1/users
 userRouter.get('/', getUsers);
