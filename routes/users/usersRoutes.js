@@ -1,5 +1,16 @@
 const express = require('express');
-const { registerUser, loginUser, getUserProfile, getUsers, deleteUser, updateUser, uploadProfilePicture } = require('../../controllers/users/usersController');
+const { 
+    registerUser, 
+    loginUser, 
+    getUserProfile, 
+    getUsers, 
+    deleteUser, 
+    updateUser, 
+    uploadProfilePicture, 
+    viewedBy,
+    followUser,
+    unfollowUser
+} = require('../../controllers/users/usersController');
 const isLogin = require("../../middlewares/isLogin")
 const storage = require("../../config/cloudinary");
 const multer = require("multer");
@@ -32,5 +43,14 @@ userRouter.post(
     upload.single("profile"),
     uploadProfilePicture
 );
+
+//GET/api/v1/users/profile-viewers/:id
+userRouter.get('/profile-viewers/:id', isLogin, viewedBy);
+
+//GET/api/v1/users/following/:id
+userRouter.get('/following/:id', isLogin, followUser);
+
+//GET/api/v1/users/following/:id
+userRouter.get('/unfollowing/:id', isLogin, unfollowUser);
 
 module.exports = userRouter;

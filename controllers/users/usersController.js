@@ -98,6 +98,103 @@ const getUsers = async(req, res) => {
     }
 }
 
+const viewedBy = async(req, res, next) => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        const userWhoViewed = await User.findById(req.userAuth);
+
+        if (user && userWhoViewed) {
+            const isUserAlreadyViewed = user.viewers.find(
+                viewer => viewer.toString() === userWhoViewed._id.toJSON()
+            );
+
+            if (isUserAlreadyViewed) {
+                return next(appError("You Already Viewed This Profile"));
+            } else {
+                user.viewers.push(userWhoViewed._id);
+    
+                await user.save();
+    
+                res.json({
+                    status: 'successful',
+                    data: "You have successfully viewed my profile"
+                });
+            }
+        } 
+    } catch (error) {
+        res.json(error.message)
+    }
+}
+
+const followUser = async(req, res, next) => {
+    try {
+        const userToFollow = await User.findById(req.params.id);
+
+        const userWhoFollowed = await User.findById(req.userAuth);
+
+        if (userToFollow && userWhoFollowed) {
+            const isUserAlreadyFollowed = userToFollow.followers.some(
+                followerId => followerId.equals(userWhoFollowed._id)
+            );
+
+            if (isUserAlreadyFollowed) {
+                return next(appError("You already followed this user"));
+            } else {
+                userToFollow.followers.push(userWhoFollowed._id);
+                userWhoFollowed.following.push(userToFollow._id);
+
+                await userWhoFollowed.save();
+                await userToFollow.save();
+
+                res.json({
+                    status: "success",
+                    data: "You have successfully followed this user",
+                });
+            }
+        }
+    } catch (error) {
+        res.json(error.message)
+    }
+}
+
+const unfollowUser = async(req, res, next) => {
+    try {
+        const userToUnfollow = await User.findById(req.params.id);
+
+        const userWhoUnfollowed = await User.findById(req.userAuth);
+
+        if (userToUnfollow && userWhoUnfollowed) {
+            const isFollowing = userToUnfollow.followers.find(
+                follower => follower.toString() === userWhoUnfollowed._id.toString()
+            );
+
+            if (!isFollowing) {
+                return next(appError("You already unfollowed this user"));
+            } else {
+                userToUnfollow.followers = userToUnfollow.followers.filter(
+                  followerId => followerId.toString() !== userWhoUnfollowed._id.toString() 
+                );
+
+                await userToUnfollow.save();
+
+                userWhoUnfollowed.following = userWhoUnfollowed.following.filter(
+                    followerId => followerId.toString() !== userToUnfollow._id.toString() 
+                );
+
+                await userWhoUnfollowed.save();
+
+                res.json({
+                    status: "success",
+                    data: "You have successfully unfollowed this user",
+                });
+            }
+        }
+    } catch (error) {
+        res.json(error.message)
+    }
+}
+
 const deleteUser = async(req, res) => {
     try {
         res.json({
@@ -167,5 +264,8 @@ module.exports = {
     getUsers,
     deleteUser,
     updateUser,
-    uploadProfilePicture
+    uploadProfilePicture,
+    viewedBy,
+    followUser,
+    unfollowUser
 }
