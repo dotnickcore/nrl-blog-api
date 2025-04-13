@@ -195,6 +195,66 @@ const unfollowUser = async(req, res, next) => {
     }
 }
 
+const blockUser = async(req, res, next) => {
+    try {
+        const userToBlock = await User.findById(req.params.id);
+        const userWhoBlocked = await User.findById(req.userAuth);
+
+        if(userToBlock && userWhoBlocked) {
+            const isUserAlreadyBlocked = userWhoBlocked.blocked.find(
+                blocked => blocked.toString() === userToBlock._id.toString()
+            );
+
+            if (isUserAlreadyBlocked) {
+                return next(appError("You Have Already Blocked This User"));
+            }
+
+            userWhoBlocked.blocked.push(userToBlock._id);
+
+            await userWhoBlocked.save();
+
+            res.json({
+                status: "success",
+                data: "You have successfully blocked this user",
+            });
+        }
+
+        
+    } catch (error) {
+        res.json(error.message)
+    }
+}
+
+const unblockUser = async(req, res, next) => {
+    try {
+        const userToBeUnblocked = await User.findById(req.params.id);
+        const userWhoUnblocked = await User.findById(req.userAuth);
+
+        if (userToBeUnblocked && userWhoUnblocked) {
+            const isUserAlreadyUnblocked = userWhoUnblocked.blocked.find(
+                blocked => blocked.toString() === userToBeUnblocked._id.toString()
+            );
+
+            if (!isUserAlreadyUnblocked) {
+                return next(appError("You have not blocked this user"));
+            }
+
+            userWhoUnblocked.blocked = userWhoUnblocked.blocked.filter(
+                blocked => blocked.toString() !== userToBeUnblocked._id.toString()
+            );
+
+            await userWhoUnblocked.save();
+
+            res.json({
+                status: "success",
+                data: "You have successfully unblocked this user",
+            });
+        }
+    } catch (error) {
+        res.json(error.message)
+    }
+}
+
 const deleteUser = async(req, res) => {
     try {
         res.json({
@@ -267,5 +327,7 @@ module.exports = {
     uploadProfilePicture,
     viewedBy,
     followUser,
-    unfollowUser
+    unfollowUser,
+    blockUser,
+    unblockUser
 }

@@ -9,7 +9,9 @@ const {
     uploadProfilePicture, 
     viewedBy,
     followUser,
-    unfollowUser
+    unfollowUser,
+    blockUser,
+    unblockUser
 } = require('../../controllers/users/usersController');
 const isLogin = require("../../middlewares/isLogin")
 const storage = require("../../config/cloudinary");
@@ -52,5 +54,12 @@ userRouter.get('/following/:id', isLogin, followUser);
 
 //GET/api/v1/users/following/:id
 userRouter.get('/unfollowing/:id', isLogin, unfollowUser);
+
+//GET/api/v1/users/blocked/:id
+userRouter.get('/blocked/:id', isLogin, blockUser);
+
+//GET/api/v1/users/unblocked/:id
+userRouter.get('/unblocked/:id', isLogin, unblockUser);
+
 
 module.exports = userRouter;
