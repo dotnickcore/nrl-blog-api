@@ -53,11 +53,13 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     }],
+    /*
     plan:[{
         type: String,
         enum: ['Free', 'Premium', 'Pro'],
         default: 'Free'
     }],
+    */
     userAward:{
         type: String,
         enum: ['Bronze', 'Silver', 'Gold'],
@@ -65,6 +67,35 @@ const userSchema = new mongoose.Schema({
     }
 },{
     timestamps: true,
+    toJSON: { virtuals: true },
+});
+
+userSchema.virtual("fullname").get(function () {
+    return `${this.firstname || ''} ${this.lastname || ''}`.trim();
+});
+
+userSchema.virtual("initials").get(function () {
+    return `${this.firstname[0] || ''}${this.lastname[0] || ''}`.trim();
+});
+
+userSchema.virtual("postCount").get(function () {
+    return `${this.posts.length}`.trim();
+});
+
+userSchema.virtual("followerCount").get(function () {
+    return this.followers ? this.followers.length : 0;
+});
+
+userSchema.virtual("followingCount").get(function () {
+    return this.following ? this.following.length : 0;
+});
+
+userSchema.virtual("viewerCount").get(function () {
+    return `${this.viewers.length}`.trim();
+});
+
+userSchema.virtual("blockedCount").get(function () {
+    return `${this.blocked.length}`.trim();
 });
 
 const User = mongoose.model("User", userSchema);
