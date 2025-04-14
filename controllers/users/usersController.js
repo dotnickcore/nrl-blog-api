@@ -255,6 +255,48 @@ const unblockUser = async(req, res, next) => {
     }
 }
 
+const adminBlockUser = async(req, res, next) => {
+    try {
+        const userToBeBlocked = await User.findById(req.params.id);
+
+        if (!userToBeBlocked) {
+            return next(appError("User Not Found"))
+        };
+
+        userToBeBlocked.isBlocked = true;
+
+        await userToBeBlocked.save();
+
+        res.json({
+            status: "success",
+            data: "admin has blocked this user"
+        })
+    } catch (error) {
+        res.json(error.message);
+    }
+}
+
+const adminUnblockUser = async(req, res, next) => {
+    try {
+        const userToBeUnblocked = await User.findById(req.params.id);
+
+        if (!userToBeUnblocked) {
+            return next(appErr("User not Found"));
+        }
+
+        userToBeUnblocked.isBlocked = false;
+
+        await userToBeUnblocked.save();
+
+        res.json({
+            status: "success",
+            data: "admin has unblocked this user"
+        })
+    } catch (error) {
+        res.json(error.message);
+    }
+}
+
 const deleteUser = async(req, res) => {
     try {
         res.json({
@@ -329,5 +371,7 @@ module.exports = {
     followUser,
     unfollowUser,
     blockUser,
-    unblockUser
+    unblockUser,
+    adminBlockUser,
+    adminUnblockUser
 }

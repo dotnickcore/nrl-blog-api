@@ -4,6 +4,7 @@ const postRouter = require("./routes/posts/postsRoutes");
 const commentRouter = require("./routes/comments/commentsRoutes");
 const categoryRouter = require("./routes/categories/categoriesRoutes");
 const globalErrorHandler = require("./middlewares/globalErrorHandler");
+const isAdmin = require("./middlewares/isAdmin");
 
 require("dotenv").config();
 require("./config/dbConnect")

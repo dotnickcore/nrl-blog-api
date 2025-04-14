@@ -11,11 +11,14 @@ const {
     followUser,
     unfollowUser,
     blockUser,
-    unblockUser
+    unblockUser,
+    adminBlockUser,
+    adminUnblockUser
 } = require('../../controllers/users/usersController');
 const isLogin = require("../../middlewares/isLogin")
 const storage = require("../../config/cloudinary");
 const multer = require("multer");
+const isAdmin = require('../../middlewares/isAdmin');
 const userRouter = express.Router();
 
 const upload = multer({ storage });
@@ -61,5 +64,10 @@ userRouter.get('/blocked/:id', isLogin, blockUser);
 //GET/api/v1/users/unblocked/:id
 userRouter.get('/unblocked/:id', isLogin, unblockUser);
 
+//PUT/api/v1/users/admin-block/:id
+userRouter.put('/admin-block/:id', isLogin, isAdmin, adminBlockUser);
+
+//PUT/api/v1/users/admin-block/:id
+userRouter.put('/admin-unblock/:id', isLogin, isAdmin, adminUnblockUser);
 
 module.exports = userRouter;
