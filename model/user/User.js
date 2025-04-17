@@ -70,6 +70,19 @@ const userSchema = new mongoose.Schema({
     toJSON: { virtuals: true },
 });
 
+// hools
+// pre-before record is saved
+userSchema.pre(/^find/, function (next) {
+    console.log("Pre Hook Called")
+    next();
+});
+
+// post -after saving
+userSchema.pre("save", function (next) {
+    console.log("Post Hook Called")
+});
+
+
 userSchema.virtual("fullname").get(function () {
     return `${this.firstname || ''} ${this.lastname || ''}`.trim();
 });
