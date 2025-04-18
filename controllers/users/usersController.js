@@ -74,7 +74,7 @@ const loginUser = async(req, res) => {
 
 const getUserProfile = async(req, res) => {
     try {
-        const user = await User.findById(req.userAuth)
+        const user = await User.findById(req.userAuth);
 
         res.json({
             status: 'success',
@@ -309,6 +309,17 @@ const deleteUser = async(req, res) => {
 }
 
 const updateUser = async(req, res) => {
+    try {
+        res.json({
+            status: 'success',
+            data: 'user profile updated'
+        });
+    } catch (error) {
+        res.json(error)
+    }
+}
+
+const updatePassord = async(req, res) => {
     try {
         res.json({
             status: 'success',

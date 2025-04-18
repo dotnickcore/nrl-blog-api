@@ -1,3 +1,4 @@
+const Post = require('../Post/Post');
 const mongoose = require('mongoose');
 
 // create schema
@@ -72,16 +73,123 @@ const userSchema = new mongoose.Schema({
 
 // hools
 // pre-before record is saved
-userSchema.pre(/^find/, function (next) {
-    console.log("Pre Hook Called")
+userSchema.pre("findOne", async function (next) {
+    // populate the post
+    this.populate('posts');
+
+    // get user id
+    const userId = this._conditions._id;
+
+    // find the posts created by the user
+    const posts = await Post.find({ user: userId });
+
+    // get the last post created by the user
+    const lastPost = posts[posts.length - 1];
+
+    // get the last post date
+    const lastPostDate = new Date(lastPost.createdAt);
+
+    // get the last post date in string format
+    const lastPostDateAsString = lastPostDate.toDateString();
+
+    userSchema.virtual("lastPostDate").get(function () {
+        return lastPostDateAsString;
+    })
+
+    // ============================ Check if User Is Inactive For 30 Days ============================ //
+    // get the current date
+    const currentDate = new Date();
+
+    // get the difference betweem the last post date and the current date
+    const diff = currentDate - lastPostDate;
+
+    // get the difference in days since last post
+    const diffInDays = diff / (1000 * 3600 * 24);
+
+    if (diffInDays < 30) {
+        // add virtual isInactive to the schema to check of a user is inactive for 30 days
+        userSchema.virtual('isActive').get(function() {
+            return true;
+        });
+
+        await User.findByIdAndUpdate(
+            userId,
+            {
+                isBlocked: false,
+            },
+            {
+                new: true,
+            }
+        );
+
+    } else {
+        userSchema.virtual('isActive').get(function() {
+            return false;
+        });
+
+        await User.findByIdAndUpdate(
+            userId,
+            {
+                isBlocked: true,
+            },
+            {
+                new: true,
+            }
+        );
+    }
+
+    // ============================ Get Last Active Date For User ============================ //
+    // covert to days ago
+    const daysAgo = Math.floor(diffInDays);
+    
+    // add virtual for lastActive
+    userSchema.virtual("lastActive").get(function() {
+        // checks if they were present
+        if (daysAgo <= 0) {
+            return "Today";
+        } else {
+            return `${daysAgo} Days Ago`;
+        }
+    })
+
+    // ============================ Update User Award Based On Number of Posts ============================ //
+    // get the number of posts
+    const numberOfPosts = posts.length;
+
+    if (numberOfPosts < 10) {
+        await User.findByIdAndUpdate(
+            userId,
+            {
+                userAward: "Bronze",
+            },
+            {
+                new: true,
+            }
+        )
+    } else if (numberOfPosts < 20) {
+        await User.findByIdAndUpdate(
+            userId,
+            {
+                userAward: "Silver",
+            },
+            {
+                new: true,
+            }
+        )
+    } else {
+        await User.findByIdAndUpdate(
+            userId,
+            {
+                userAward: "Gold",
+            },
+            {
+                new: true,
+            }
+        )
+    }
+
     next();
 });
-
-// post -after saving
-userSchema.pre("save", function (next) {
-    console.log("Post Hook Called")
-});
-
 
 userSchema.virtual("fullname").get(function () {
     return `${this.firstname || ''} ${this.lastname || ''}`.trim();
