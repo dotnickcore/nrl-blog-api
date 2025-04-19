@@ -281,7 +281,7 @@ const adminUnblockUser = async(req, res, next) => {
         const userToBeUnblocked = await User.findById(req.params.id);
 
         if (!userToBeUnblocked) {
-            return next(appErr("User not Found"));
+            return next(appError("User not Found"));
         }
 
         userToBeUnblocked.isBlocked = false;

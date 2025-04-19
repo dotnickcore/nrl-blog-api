@@ -1,5 +1,6 @@
 const express = require('express');
 const { createComment, getComment, getComments, deleteComment, updateComment } = require('../../controllers/comments/commentsController');
+const isLogin = require('../../middlewares/isLogin')
 
 const commentRouter = express.Router();
 
