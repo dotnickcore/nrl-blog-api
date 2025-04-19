@@ -13,7 +13,8 @@ const {
     blockUser,
     unblockUser,
     adminBlockUser,
-    adminUnblockUser
+    adminUnblockUser,
+    updatePassword
 } = require('../../controllers/users/usersController');
 const isLogin = require("../../middlewares/isLogin")
 const storage = require("../../config/cloudinary");
@@ -36,10 +37,10 @@ userRouter.get('/profile/', isLogin, getUserProfile);
 userRouter.get('/', getUsers);
 
 // DELETE/api/v1/users/:id
-userRouter.delete('/:id', deleteUser);
+userRouter.delete('/delete-account', isLogin, deleteUser);
 
 // PUT/api/v1/users/:id
-userRouter.put('/:id', updateUser);
+userRouter.put('/', isLogin, updateUser);
 
 // PUT/api/v1/users/profile-photo-upload
 userRouter.post(
@@ -68,6 +69,9 @@ userRouter.get('/unblocked/:id', isLogin, unblockUser);
 userRouter.put('/admin-block/:id', isLogin, isAdmin, adminBlockUser);
 
 //PUT/api/v1/users/admin-block/:id
-userRouter.put('/admin-unblock/:id', isLogin, isAdmin, adminUnblockUser);
+userRouter.put('/admin-unblock', isLogin, updatePassword);
+
+//PUT/api/v1/users/update-user-password
+userRouter.put('/update-user-password', isLogin, updatePassword);
 
 module.exports = userRouter;

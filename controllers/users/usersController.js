@@ -1,11 +1,14 @@
 const bcrypt = require('bcryptjs');
 const User = require("../../model/User/User");
+const Post = require("../../model/Post/Post");
+const Comment = require("../../model/Comment/Comment");
+const Category = require("../../model/Category/Category");
 const generateToken = require("../../utils/generateToken");
 const getTokenFromHeader = require('../../utils/getTokenFromHeader');
 const { appError, AppError } = require('../../utils/appError');
 
 const registerUser = async(req, res, next) => {
-    const { firstname, lastname, profilePhoto, email, password } = req.body;
+    const { firstname, lastname, email, password } = req.body;
     
     try {
         const userFound = await User.findOne({email});
@@ -40,9 +43,7 @@ const loginUser = async(req, res) => {
         const userFound = await User.findOne({email});
 
         if (!userFound) {
-            return res.json({
-                msg: "Invalid Login Credentials"
-            });
+            return next(appError("Invalid login credentials. Please try again."));
         }
 
         const isPasswordMatch = await bcrypt.compare(
@@ -68,7 +69,7 @@ const loginUser = async(req, res) => {
             }
         });
     } catch (error) {
-        res.json(error)
+        next(new AppError(error.message));
     }
 }
 
@@ -81,7 +82,7 @@ const getUserProfile = async(req, res) => {
             data: user
         });
     } catch (error) {
-        res.json(error)
+        next(new AppError(error.message));
     }
 }
 
@@ -94,7 +95,7 @@ const getUsers = async(req, res) => {
             data: users
         });
     } catch (error) {
-        res.json(error)
+        next(new AppError(error.message));
     }
 }
 
@@ -123,7 +124,7 @@ const viewedBy = async(req, res, next) => {
             }
         } 
     } catch (error) {
-        res.json(error.message)
+        next(new AppError(error.message));
     }
 }
 
@@ -154,7 +155,7 @@ const followUser = async(req, res, next) => {
             }
         }
     } catch (error) {
-        res.json(error.message)
+        next(new AppError(error.message));
     }
 }
 
@@ -191,7 +192,7 @@ const unfollowUser = async(req, res, next) => {
             }
         }
     } catch (error) {
-        res.json(error.message)
+        next(new AppError(error.message));
     }
 }
 
@@ -221,7 +222,7 @@ const blockUser = async(req, res, next) => {
 
         
     } catch (error) {
-        res.json(error.message)
+        next(new AppError(error.message));
     }
 }
 
@@ -251,7 +252,7 @@ const unblockUser = async(req, res, next) => {
             });
         }
     } catch (error) {
-        res.json(error.message)
+        next(new AppError(error.message));
     }
 }
 
@@ -272,7 +273,7 @@ const adminBlockUser = async(req, res, next) => {
             data: "admin has blocked this user"
         })
     } catch (error) {
-        res.json(error.message);
+        next(new AppError(error.message));
     }
 }
 
@@ -293,40 +294,90 @@ const adminUnblockUser = async(req, res, next) => {
             data: "admin has unblocked this user"
         })
     } catch (error) {
-        res.json(error.message);
+        next(new AppError(error.message));
     }
 }
 
 const deleteUser = async(req, res) => {
     try {
+        const userToDelete = await User.findById(req.userAuth);
+
+        await Post.deleteMany({ user: req.userAuth });
+
+        await Comment.deleteMany({ user: req.userAuth });
+
+        await Category.deleteMany({ user: req.userAuth });
+
+        await userToDelete.deleteOne();
+
         res.json({
             status: 'success',
             data: 'user profile deleted'
         });
     } catch (error) {
-        res.json(error)
+        next(new AppError(error.message));
     }
 }
 
 const updateUser = async(req, res) => {
     try {
-        res.json({
-            status: 'success',
-            data: 'user profile updated'
-        });
+        const { email, firstname, lastname } = req.body;
+
+        if (email) {
+            const isEmailRegistered = await User.findOne({email});
+
+            if (isEmailRegistered) {
+                return next(appError("Email is already registered. Please use a different email or log in."));
+            }
+        }
+
+            const user = await User.findByIdAndUpdate(
+                req.userAuth, 
+                {
+                    firstname,
+                    lastname,
+                    email
+                },
+                {
+                    new: true,
+                    runValidators: true
+                }
+            ); 
+
+            res.json({
+                status: 'success',
+                data: user
+            });
     } catch (error) {
-        res.json(error)
+        next(new AppError(error.message));
     }
 }
 
-const updatePassord = async(req, res) => {
+const updatePassword = async(req, res, next) => {
     try {
-        res.json({
-            status: 'success',
-            data: 'user profile updated'
-        });
+        const { password } = req.body;
+
+        if (password) {
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password, salt);
+
+            console.log(req.userAuth);
+
+            const user = await User.findByIdAndUpdate(
+                req.userAuth,
+                { password: hashedPassword },
+                { new: true, runValidators: true }
+            );
+
+            res.json({
+                status: 'success',
+                data: 'password has been successful changed'
+            });
+        } else {
+            return next(appError("Please provide a password"))
+        }
     } catch (error) {
-        res.json(error)
+        next(new AppError(error.message));
     }
 }
 
@@ -384,5 +435,6 @@ module.exports = {
     blockUser,
     unblockUser,
     adminBlockUser,
-    adminUnblockUser
+    adminUnblockUser,
+    updatePassword
 }

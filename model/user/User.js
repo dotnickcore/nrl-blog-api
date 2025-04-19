@@ -87,7 +87,7 @@ userSchema.pre("findOne", async function (next) {
     const lastPost = posts[posts.length - 1];
 
     // get the last post date
-    const lastPostDate = new Date(lastPost.createdAt);
+    const lastPostDate = new Date(lastPost?.createdAt);
 
     // get the last post date in string format
     const lastPostDateAsString = lastPostDate.toDateString();
