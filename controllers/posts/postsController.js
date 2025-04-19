@@ -4,16 +4,22 @@ const { appError, AppError } = require('../../utils/appError');
 
 const createPost = async(req, res, next) => {
     try {
-        const { title, description } = req.body;
+        const { title, description, category } = req.body;
 
         // find the user
         const author = await User.findById(req.userAuth);
+
+        // checks if user was blocked
+        if (author.isBlocked) {
+            return next(appError("You are currently blocked from creating posts."), 403);
+        }
 
         // create the post
         const postCreated = await Post.create({
             title,
             description,
             user: author._id,
+            category
         })
 
         // associate the user to a post -Push the post into the user posts field
@@ -31,7 +37,7 @@ const createPost = async(req, res, next) => {
     }
 }
 
-const getPost = async(req, res) => {
+const getPost = async(req, res, next) => {
     try {
         res.json({
             status: 'success',
@@ -42,7 +48,7 @@ const getPost = async(req, res) => {
     }
 }
 
-const getPosts = async(req, res) => {
+const getPosts = async(req, res, next) => {
     try {
         res.json({
             status: 'success',
@@ -53,7 +59,7 @@ const getPosts = async(req, res) => {
     }
 }
 
-const deletePost = async(req, res) => {
+const deletePost = async(req, res, next) => {
     try {
         res.json({
             status: 'success',
@@ -64,7 +70,7 @@ const deletePost = async(req, res) => {
     }
 }
 
-const updatePost = async(req, res) => {
+const updatePost = async(req, res, next) => {
     try {
         res.json({
             status: 'success',

@@ -35,7 +35,7 @@ const registerUser = async(req, res, next) => {
     }
 }
 
-const loginUser = async(req, res) => {
+const loginUser = async(req, res, next) => {
     const { email, password } = req.body;
 
     try {
@@ -72,7 +72,7 @@ const loginUser = async(req, res) => {
     }
 }
 
-const getUserProfile = async(req, res) => {
+const getUserProfile = async(req, res, next) => {
     try {
         const user = await User.findById(req.userAuth);
 
@@ -85,7 +85,7 @@ const getUserProfile = async(req, res) => {
     }
 }
 
-const getUsers = async(req, res) => {
+const getUsers = async(req, res, next) => {
     try {
         const users = await User.find();
 
@@ -297,7 +297,7 @@ const adminUnblockUser = async(req, res, next) => {
     }
 }
 
-const deleteUser = async(req, res) => {
+const deleteUser = async(req, res, next) => {
     try {
         const userToDelete = await User.findById(req.userAuth);
 
@@ -318,7 +318,7 @@ const deleteUser = async(req, res) => {
     }
 }
 
-const updateUser = async(req, res) => {
+const updateUser = async(req, res, next) => {
     try {
         const { email, firstname, lastname } = req.body;
 

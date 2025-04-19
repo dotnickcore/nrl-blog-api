@@ -1,7 +1,7 @@
 const Category = require("../../model/Category/Category");
 const { appError, AppError } = require('../../utils/appError');
 
-const createCategories = async(req, res) => {
+const createCategories = async(req, res, next) => {
     try {
         const { title } = req.body;
 
@@ -19,7 +19,7 @@ const createCategories = async(req, res) => {
     }
 }
 
-const getCategories = async(req, res) => {
+const getCategories = async(req, res, next) => {
     try {
         const categories = await Category.find();
 
@@ -64,7 +64,7 @@ const deleteCategory = async(req, res, next) => {
     }
 }
 
-const updateCategory = async(req, res) => {
+const updateCategory = async(req, res, next) => {
     try {
         const { title } = req.body;
 

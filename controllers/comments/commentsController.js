@@ -1,6 +1,6 @@
 const { appError, AppError } = require('../../utils/appError');
 
-const createComment = async(req, res) => {
+const createComment = async(req, res, next) => {
     try {
         res.json({
             status: 'success',
@@ -11,7 +11,7 @@ const createComment = async(req, res) => {
     }
 }
 
-const getComment = async(req, res) => {
+const getComment = async(req, res, next) => {
     try {
         res.json({
             status: 'success',
@@ -22,7 +22,7 @@ const getComment = async(req, res) => {
     }
 }
 
-const getComments = async(req, res) => {
+const getComments = async(req, res, next) => {
     try {
         res.json({
             status: 'success',
@@ -33,7 +33,7 @@ const getComments = async(req, res) => {
     }
 }
 
-const deleteComment = async(req, res) => {
+const deleteComment = async(req, res, next) => {
     try {
         res.json({
             status: 'success',
@@ -44,7 +44,7 @@ const deleteComment = async(req, res) => {
     }
 }
 
-const updateComment = async(req, res) => {
+const updateComment = async(req, res, next) => {
     try {
         res.json({
             status: 'success',
