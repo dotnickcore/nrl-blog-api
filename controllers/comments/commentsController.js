@@ -5,7 +5,7 @@ const createComment = async(req, res) => {
             data: 'comment created'
         });
     } catch (error) {
-        res.json(error)
+        next(new AppError(error.message));
     }
 }
 
@@ -16,7 +16,7 @@ const getComment = async(req, res) => {
             data: 'comment found'
         });
     } catch (error) {
-        res.json(error)
+        next(new AppError(error.message));
     }
 }
 
@@ -27,7 +27,7 @@ const getComments = async(req, res) => {
             data: 'comments found'
         });
     } catch (error) {
-        res.json(error)
+        next(new AppError(error.message));
     }
 }
 
@@ -38,7 +38,7 @@ const deleteComment = async(req, res) => {
             data: 'comment deleted'
         });
     } catch (error) {
-        res.json(error)
+        next(new AppError(error.message));
     }
 }
 
@@ -49,7 +49,7 @@ const updateComment = async(req, res) => {
             data: 'comment updated'
         });
     } catch (error) {
-        res.json(error)
+        next(new AppError(error.message));
     }
 }
 

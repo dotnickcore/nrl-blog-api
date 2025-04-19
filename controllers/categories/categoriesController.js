@@ -5,7 +5,7 @@ const createCategories = async(req, res) => {
             data: 'category created'
         });
     } catch (error) {
-        res.json(error)
+        next(new AppError(error.message));
     }
 }
 
@@ -16,7 +16,7 @@ const getCategories = async(req, res) => {
             data: 'categories found'
         });
     } catch (error) {
-        res.json(error)
+        next(new AppError(error.message));
     }
 }
 
@@ -27,7 +27,7 @@ const getCategory = async(req, res) => {
             data: 'category found'
         });
     } catch (error) {
-        res.json(error)
+        next(new AppError(error.message));
     }
 }
 
@@ -38,7 +38,7 @@ const deleteCategory = async(req, res) => {
             data: 'category deleted'
         });
     } catch (error) {
-        res.json(error)
+        next(new AppError(error.message));
     }
 }
 
@@ -49,7 +49,7 @@ const updateCategory = async(req, res) => {
             data: 'category updated'
         });
     } catch (error) {
-        res.json(error)
+        next(new AppError(error.message));
     }
 }
 

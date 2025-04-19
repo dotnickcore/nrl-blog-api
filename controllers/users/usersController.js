@@ -4,7 +4,6 @@ const Post = require("../../model/Post/Post");
 const Comment = require("../../model/Comment/Comment");
 const Category = require("../../model/Category/Category");
 const generateToken = require("../../utils/generateToken");
-const getTokenFromHeader = require('../../utils/getTokenFromHeader');
 const { appError, AppError } = require('../../utils/appError');
 
 const registerUser = async(req, res, next) => {

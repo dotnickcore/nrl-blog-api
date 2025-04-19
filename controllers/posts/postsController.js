@@ -26,7 +26,7 @@ const createPost = async(req, res, next) => {
             data: postCreated
         });
     } catch (error) {
-        res.json(error)
+        next(new AppError(error.message));
     }
 }
 
@@ -37,7 +37,7 @@ const getPost = async(req, res) => {
             data: 'post found'
         });
     } catch (error) {
-        res.json(error)
+        next(new AppError(error.message));
     }
 }
 
@@ -48,7 +48,7 @@ const getPosts = async(req, res) => {
             data: 'posts found'
         });
     } catch (error) {
-        res.json(error)
+        next(new AppError(error.message));
     }
 }
 
@@ -59,7 +59,7 @@ const deletePost = async(req, res) => {
             data: 'post deleted'
         });
     } catch (error) {
-        res.json(error)
+        next(new AppError(error.message));
     }
 }
 
@@ -70,7 +70,7 @@ const updatePost = async(req, res) => {
             data: 'post updated'
         });
     } catch (error) {
-        res.json(error)
+        next(new AppError(error.message));
     }
 }
 
