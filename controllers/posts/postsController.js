@@ -37,16 +37,36 @@ const createPost = async(req, res, next) => {
     }
 }
 
-const getPost = async(req, res, next) => {
+const getPost = async (req, res, next) => {
     try {
-        res.json({
-            status: 'success',
-            data: 'post found'
-        });
+      // Find the post by ID
+      const post = await Post.findById(req.params.id);
+  
+      // Check if the user has already viewed the post
+      const isViewed = post.numViews.includes(req.userAuth);
+  
+      // If the user has already viewed it, do nothing
+      if (isViewed) return res.json({
+        status: 'success',
+        message: 'You have already viewed this post.',
+        data: post,
+      });
+  
+      // If not, add user to the 'numViews' array and increment 'viewCount'
+      post.numViews.push(req.userAuth);
+      post.viewCount += 1;  // Increment the total view count
+  
+      // Save the post with updated data
+      await post.save();
+  
+      res.json({
+        status: 'success',
+        data: post,
+      });
     } catch (error) {
-        next(new AppError(error.message));
+      next(new AppError(error.message));
     }
-}
+  };
 
 const getPosts = async(req, res, next) => {
     try {
