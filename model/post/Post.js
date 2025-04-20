@@ -14,7 +14,6 @@ const postSchema = new mongoose.Schema({
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category",
-        // required: ["Post category is required"]
     },
     numViews: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -27,6 +26,10 @@ const postSchema = new mongoose.Schema({
     dislikes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
+    }],
+    comments: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comment"
     }],
     user: {
         type: mongoose.Schema.Types.ObjectId,
