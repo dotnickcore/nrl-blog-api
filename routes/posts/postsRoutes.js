@@ -1,5 +1,5 @@
 const express = require('express');
-const { createPost, getPost, getPosts, deletePost, updatePost } = require('../../controllers/posts/postsController');
+const { createPost, getPost, getPosts, deletePost, updatePost, handlePostLike, handlePostDislike } = require('../../controllers/posts/postsController');
 const isLogin = require("../../middlewares/isLogin");
 
 const postRouter = express.Router();
@@ -8,15 +8,19 @@ const postRouter = express.Router();
 postRouter.post('/', isLogin, createPost);
 
 // GET/api/v1/posts/:id
-postRouter.get('/:id', getPost);
+postRouter.get('/:id', isLogin, getPost);
 
 // GET/api/v1/posts
-postRouter.get('/', getPosts);
+postRouter.get('/', isLogin, getPosts);
+
+postRouter.post('/:id/like', isLogin, handlePostLike);
+
+postRouter.post('/:id/dislike', isLogin, handlePostDislike);
 
 // DELETE/api/v1/posts/:id
-postRouter.delete('/:id', deletePost);
+postRouter.delete('/:id', isLogin, deletePost);
 
 // PUT/api/v1/posts/:id
-postRouter.put('/:id', updatePost);
+postRouter.put('/:id', isLogin, updatePost);
 
 module.exports = postRouter;
