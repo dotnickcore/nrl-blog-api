@@ -45,26 +45,37 @@ const postSchema = new mongoose.Schema({
 // hooks
 postSchema.virtual("viewsCount").get(function () {
     return this.numViews.length;  // This accesses 'numViews' array to calculate length
-  });
+});
 
-  postSchema.virtual("likesCount").get(function () {
+postSchema.virtual("likesCount").get(function () {
     return this.likes.length;  // This accesses 'likes' array to calculate length
-  });
+});
 
-  postSchema.virtual("dislikesCount").get(function () {
+postSchema.virtual("dislikesCount").get(function () {
     return this.dislikes.length;  // This accesses 'dislikes' array to calculate length
-  });
+});
 
-  postSchema.virtual("likesPercentage").get(function () {
+postSchema.virtual("likesPercentage").get(function () {
     const total = this.likes.length + this.dislikes.length;
     if (total === 0) return 0; // Avoid divide by 0
     return Math.round((this.likes.length / total) * 100);
-  });
+});
   
-  postSchema.virtual("dislikesPercentage").get(function () {
+postSchema.virtual("dislikesPercentage").get(function () {
     const total = this.likes.length + this.dislikes.length;
     if (total === 0) return 0;
     return Math.round((this.dislikes.length / total) * 100);
+});
+
+postSchema.virtual("daysAgo").get(function () {
+    const post = this;
+    const date = new Date(post.createdAt);
+    const daysAgo = Math.floor((Date.now() - date) / 86400000);
+    return daysAgo === 0
+        ? "Today"
+        : daysAgo === 1
+        ? "Yesterday"
+        : `${daysAgo} days ago`;
   });
   
   // If you want to run any logic before a 'find' operation, you can use a 'pre' hook like this:

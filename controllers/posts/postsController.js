@@ -1,5 +1,6 @@
 const Post = require("../../model/Post/Post");
 const User = require("../../model/User/User");
+const { post } = require("../../routes/posts/postsRoutes");
 const { appError, AppError } = require('../../utils/appError');
 
 const createPost = async(req, res, next) => {
@@ -19,7 +20,8 @@ const createPost = async(req, res, next) => {
             title,
             description,
             user: author._id,
-            category
+            category,
+            photo: req?.file?.path,
         })
 
         // associate the user to a post -Push the post into the user posts field
@@ -182,6 +184,20 @@ const handlePostDislike = async(req, res, next) => {
 
 const deletePost = async(req, res, next) => {
     try {
+        const postUser = req.userAuth;
+
+        const post = await Post.findById(req.params.id);
+
+        if (!post) {
+            return next(appError("Oops! We couldn’t find that post. It might’ve been deleted or never existed.", 404));
+        }
+
+        if (post.user.toString() !== postUser.toString()) {
+            return next(appError("You do not have permission to delete this post", 403));
+        }
+
+        await Post.findByIdAndDelete(req.params.id);
+
         res.json({
             status: 'success',
             data: 'post deleted'
@@ -193,6 +209,33 @@ const deletePost = async(req, res, next) => {
 
 const updatePost = async(req, res, next) => {
     try {
+        const { title, description, category } = req.body;
+
+        const post = await Post.findById(req.params.id);
+
+        if (!post) {
+            return next(appError("Oops! We couldn’t find that post. It might’ve been deleted or never existed.", 404));
+        }
+
+        const postUser = req.userAuth;
+
+        if (post.user.toString() !== postUser.toString()) {
+            return next(appError("You do not have permission to update this post", 403));
+        }
+
+        await Post.findByIdAndUpdate(
+            req.params.id,
+            {
+              title,
+              description,
+              category,
+              photo: req?.file?.path,
+            },
+            {
+              new: true,
+            }
+          );
+
         res.json({
             status: 'success',
             data: 'post updated'
