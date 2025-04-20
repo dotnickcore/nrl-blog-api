@@ -1,6 +1,5 @@
 const Post = require("../../model/Post/Post");
 const User = require("../../model/User/User");
-const { post } = require("../../routes/posts/postsRoutes");
 const { appError, AppError } = require('../../utils/appError');
 
 const createPost = async(req, res, next) => {
@@ -43,10 +42,10 @@ const getPost = async (req, res, next) => {
     try {
       // Find the post by ID
       const post = await Post.findById(req.params.id);
-  
+
       // Check if the user has already viewed the post
       const isViewed = post.numViews.includes(req.userAuth);
-  
+
       // If the user has already viewed it, do nothing
       if (isViewed) return res.json({
         status: 'success',
