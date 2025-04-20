@@ -151,8 +151,8 @@ const handlePostDislike = async(req, res, next) => {
         res.json({
           status: 'success',
           message: hasDisliked
-            ? 'You have successfully unliked this post'
-            : 'You have successfully liked this post',
+            ? 'You have successfully undisliked this post'
+            : 'You have successfully disliked this post',
           data: post,
         });
       } catch (error) {
